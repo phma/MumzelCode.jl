@@ -1,5 +1,5 @@
 module MumzelCode
-using OffsetArrays
+using OffsetArrays,StaticArrays
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -34,5 +34,20 @@ function invertLetter()
 end
 
 const invLetter=invertLetter()
+
+# [1:5] are the letters, [6] is the sign bit
+# The bytes can be the actual bit patters of letters (0x00-0xff), indices of
+# letters (0x00-0xff), or bit counts (0x2-0x5).
+Codeword=SVector{6,UInt8}
+
+function permute(cword::Codeword,perm::Integer)
+  mcword=MVector(cword)
+  for i in 0:9
+    if (perm>>i)&1==1
+      mcword[i%5+1],mcword[(i+2)%5+1]=mcword[(i+2)%5+1],mcword[i%5+1]
+    end
+  end
+  SVector(mcword)
+end
 
 end # module MumzelCode
