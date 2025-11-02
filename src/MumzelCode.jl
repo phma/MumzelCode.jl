@@ -9,6 +9,11 @@ const letter=OffsetVector(
 # 1011000 0101100 0010110 0001011 1001010 0000110 0010010 0001001
 # 1000011 1100010 1001001 0100011 1100001 1010000 0010100 0000101
 # 0000111 0001110 0011100 0111000 1110000 0101000 0100010 0001010
+# Rows 0 to 6 consist of 5 numbers with 3 bits set and 3 numbers with 2 bits set,
+# followed by their complements. The row number comes from the zel code, which
+# is a base-7 code for 14 bits of the number (0-16383). The column comes from
+# other parts of the number. Row 7 is not used and is filled only to make the
+# table a permutation of 0x00-0x7f.
 [
   0x2a,0x54,0x51,0x45,0x15, 0x60,0x41,0x03, 0x55,0x2b,0x2e,0x3a,0x6a, 0x1f,0x3e,0x7c,
   0x64,0x32,0x19,0x52,0x31, 0x30,0x21,0x42, 0x1b,0x4d,0x66,0x2d,0x4e, 0x4f,0x5e,0x3d,
