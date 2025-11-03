@@ -40,6 +40,40 @@ const invLetter=invertLetter()
 # letters (0x00-0xff), or bit counts (0x2-0x5).
 Codeword=SVector{6,UInt8}
 
+# Make the zel code table. Zel codes are 5-digit base-7 numbers.
+# All data zel codes have at most two zeros and do not consist
+# entirely of fives and sixes.
+# Codes with four or five zeros are reserved for idle channel codes.
+function makezel()
+  zel=OffsetVector(fill(0xffff,16384),-1)
+  invZel=OffsetVector(fill(0xffff,32768),-1)
+  n=0
+  l=OffsetVector([0,0,0,0,0],-1)
+  for i in 0:7^5-1
+    r=i
+    m=m2=0
+    for j in 0:4
+      l[j]=r%7
+      r÷=7
+      m+=l[j]==0
+      m2+=l[j]>=5
+    end
+    if m<3 && m2<5
+      r=0
+      for j in 4:-1:0
+	r=8*r+l[j]
+      end
+      invZel[r]=n
+      zel[n]=r
+      n+=1
+    end
+  end
+  @assert n==16384
+  zel,invZel
+end
+
+const zel,invZel=makezel()
+
 function permute(cword::Codeword,perm::Integer)
   mcword=MVector(cword)
   for i in 0:9
