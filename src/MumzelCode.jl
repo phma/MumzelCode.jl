@@ -19,6 +19,7 @@
 
 module MumzelCode
 using OffsetArrays,StaticArrays
+export permcode,Codeword
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -101,6 +102,22 @@ function permute(cword::Codeword,perm::Integer)
     end
   end
   SVector(mcword)
+end
+
+"""
+    permcode(cword::Codeword)
+
+Given the number of 1-bits in each letter of a codeword, returns a 10-bit number
+which can be looked up in a table to find how to undo the permutation and unpack
+the bits. If a letter has <2 1-bits, returns a negative number. If a letter has
+>5 ones, returns garbage.
+"""
+function permcode(cword::Codeword)
+  pc=0
+  for i in 1:5
+    pc|=(cword[i]-2)<<(2*i-2)
+  end
+  pc
 end
 
 end # module MumzelCode
