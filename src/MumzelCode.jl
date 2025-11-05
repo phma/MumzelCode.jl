@@ -19,7 +19,7 @@
 
 module MumzelCode
 using OffsetArrays,StaticArrays
-export permcode,Codeword
+export Codeword,permcode,permoct
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -116,6 +116,19 @@ function permcode(cword::Codeword)
   pc=0
   for i in 1:5
     pc|=(cword[i]-2)<<(2*i-2)
+  end
+  pc
+end
+
+"""
+    permoct(cword::Codeword)
+
+Given a permutation of 0-4, returns a 15-bit number which can be printed in octal.
+"""
+function permoct(cword::Codeword)
+  pc=0
+  for i in 1:5
+    pc|=cword[i]<<(3*i-3)
   end
   pc
 end
