@@ -19,7 +19,7 @@
 
 module MumzelCode
 using OffsetArrays,StaticArrays
-export Codeword,permcode,permoct
+export Codeword,permcode,permoct,cycleType
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -131,6 +131,40 @@ function permoct(cword::Codeword)
     pc|=cword[i]<<(3*i-3)
   end
   pc
+end
+
+"""
+    cycleType(cword::Codeword)
+
+Given a permutation of 43210 (`cword[6]` is ignored), returns a `Codeword` in
+which each byte in `[1:5]` is the cycle length of the byte in `cword`, except
+if there are two 2-cycles, in which case one is distinguished as 6.
+"""
+function cycleType(cword::Codeword)
+  cycle=[0,0,0,0,0,0]
+  for i in 1:5
+    if cycle[i]==0
+      j=i
+      k=0
+      while (j!=i || k==0) && k<128
+	j=cword[j]+1
+	k+=1
+      end
+      if k==2
+	for l in 1:5
+	  if cycle[l]==k
+	    k+=4
+	  end
+	end
+      end
+      j=i
+      for l in 1:k
+	cycle[j]=k
+	j=cword[j]+1
+      end
+    end
+  end
+  Codeword(cycle)
 end
 
 end # module MumzelCode
