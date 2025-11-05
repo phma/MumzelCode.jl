@@ -57,7 +57,8 @@ const invLetter=invertLetter()
 
 # [1:5] are the letters, [6] is the sign bit
 # The bytes can be the actual bit patters of letters (0x00-0xff), indices of
-# letters (0x00-0xff), or bit counts (0x2-0x5).
+# letters (0x00-0xff), permutations (0x0-0x4), or bit counts (0x2-0x5).
+# Permutations are written in reverse order (43210 is the identity).
 Codeword=SVector{6,UInt8}
 
 # Make the zel code table. Zel codes are 5-digit base-7 numbers.
