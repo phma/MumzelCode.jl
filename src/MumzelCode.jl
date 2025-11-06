@@ -32,8 +32,9 @@ const letter=OffsetVector(
 # Rows 0 to 6 consist of 5 numbers with 3 bits set and 3 numbers with 2 bits set,
 # followed by their complements. The row number comes from the zel code, which
 # is a base-7 code for 14 bits of the number (0-16383). The column comes from
-# other parts of the number. Row 7 is not used and is filled only to make the
-# table a permutation of 0x00-0x7f.
+# other parts of the number. Row 7 is not used for encoding; if it appears in
+# decoding, the codeword is invalid or a framing error. A framing error of the
+# idle codes appears as two adjacent row-0 codes opposite a row-7 code.
 [
   0x2a,0x54,0x51,0x45,0x15, 0x60,0x41,0x03, 0x55,0x2b,0x2e,0x3a,0x6a, 0x1f,0x3e,0x7c,
   0x64,0x32,0x19,0x52,0x31, 0x30,0x21,0x42, 0x1b,0x4d,0x66,0x2d,0x4e, 0x4f,0x5e,0x3d,
