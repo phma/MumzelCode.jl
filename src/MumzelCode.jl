@@ -19,7 +19,7 @@
 
 module MumzelCode
 using OffsetArrays,StaticArrays
-export Codeword,permcode,permoct,cycleType
+export Codeword,permcode,permoct,cycleType,makeperms
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -96,6 +96,11 @@ end
 
 const zel,invZel=makezel()
 
+# Permutations
+#
+# Permutations are written big-endian, e.g. 32104 is [4,0,1,2,3,0] (the sign bit
+# in a Codeword is ignored).
+
 function permute(cword::Codeword,perm::Integer)
   mcword=MVector(cword)
   for i in 0:9
@@ -130,7 +135,7 @@ Given a permutation of 0-4, returns a 15-bit number which can be printed in octa
 function permoct(cword::Codeword)
   pc=0
   for i in 1:5
-    pc|=cword[i]<<(3*i-3)
+    pc|=UInt16(cword[i])<<(3*i-3)
   end
   pc
 end
@@ -167,6 +172,17 @@ function cycleType(cword::Codeword)
     end
   end
   Codeword(cycle)
+end
+
+function makeperms()
+  rot=0x36c # index of the permutation 04321, a rotation
+  ptable=OffsetVector(fill(0x0000,1024),-1)
+  id=Codeword([0,1,2,3,4,5])
+  for i in 0x000:0x3ff
+    a=permute(id,i)
+    ptable[i]=permoct(a)
+  end
+  ptable
 end
 
 end # module MumzelCode
