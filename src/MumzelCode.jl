@@ -177,19 +177,30 @@ end
 function makeperms()
   rot=0x36c # index of the permutation 04321, a rotation
   ptable=OffsetVector(fill(0x0000,1024),-1)
+  invperm=OffsetVector(fill(0x0000,1024),-1)
   id=Codeword([0,1,2,3,4,5])
   for i in 0x000:0x3ff
     a=permute(id,i)
     ptable[i]=permoct(a)
   end
-  for i in 0x000:0x3ff
-    for j in 0x000:0x3ff
+  for j in 0x000:0x3ff
+    for i in 0x000:0x3ff
       if ptable[i]==ptable[j] && count_ones(i)>=count_ones(j) && i!=j
 	ptable[i]=j|32768
       end
     end
   end
-  ptable
+  for i in 0x000:0x3ff
+    if ptable[i]<32768
+      a=permute(id,i)
+      for j in 0x000:0x3ff
+	if permute(a,j)==id
+	  invperm[j]=i
+	end
+      end
+    end
+  end
+  invperm
 end
 
 end # module MumzelCode
