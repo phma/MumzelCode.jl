@@ -19,7 +19,7 @@
 
 module MumzelCode
 using OffsetArrays,StaticArrays
-export Codeword,permcode,permoct,cycleType,makeperms
+export Codeword,permcode,permoct,cycleType,makeperms,permstr
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -138,6 +138,15 @@ function permoct(cword::Codeword)
     pc|=UInt16(cword[i])<<(3*i-3)
   end
   pc
+end
+
+function permstr(perm::Integer)
+  str=""
+  sv=permute(Codeword([0,1,2,3,4,5]),perm)
+  for i in 5:-1:1
+    str*='0'+sv[i]
+  end
+  str
 end
 
 """
