@@ -182,6 +182,13 @@ function makeperms()
     a=permute(id,i)
     ptable[i]=permoct(a)
   end
+  for i in 0x000:0x3ff
+    for j in 0x000:0x3ff
+      if ptable[i]==ptable[j] && count_ones(i)>=count_ones(j) && i!=j
+	ptable[i]=j|32768
+      end
+    end
+  end
   ptable
 end
 
