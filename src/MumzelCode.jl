@@ -212,6 +212,22 @@ function makeperms()
   (ptable,invperm)
 end
 
+"""
+    ptable::OffsetArray(::Vector{UInt16}, 0:1023)
+
+Given the ten-bit code for a permutation, look up the 15-bit permoct code if it's
+canonical, and another ten-bit code for the same permutation, with the high bit
+set, if it isn't. Repeated lookup of codes with the high bit set will eventually
+find the canonical code.
+"""
 const (ptable,invperm)=makeperms()
+
+"""
+    invperm::OffsetArray(::Vector{UInt16}, 0:1023)
+
+Given the ten-bit code for a permutation, look up the ten-bit code for its
+inverse. Looking up twice gets the canonical code for the original permutation.
+"""
+invperm
 
 end # module MumzelCode
