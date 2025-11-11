@@ -184,7 +184,7 @@ function cycleType(cword::Codeword)
 end
 
 function makeperms()
-  rot=0x36c # index of the permutation 04321, a rotation
+  rot=0xdb # index of the permutation 04321, a rotation
   ptable=OffsetVector(fill(0x0000,1024),-1)
   invperm=OffsetVector(fill(0x0000,1024),-1)
   id=Codeword([0,1,2,3,4,5])
@@ -209,7 +209,9 @@ function makeperms()
       end
     end
   end
-  invperm
+  (ptable,invperm)
 end
+
+const (ptable,invperm)=makeperms()
 
 end # module MumzelCode
