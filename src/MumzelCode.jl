@@ -230,4 +230,18 @@ inverse. Looking up twice gets the canonical code for the original permutation.
 """
 invperm
 
+"""
+    octinx(oct::Integer)
+
+Given the 15-bit octal code for a permutation, find its 10-bit code.
+"""
+function octinx(oct::Integer)
+  for i in 0:1023
+    if ptable[i]==oct
+      return i
+    end
+  end
+  return -1
+end
+
 end # module MumzelCode
