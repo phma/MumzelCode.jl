@@ -184,7 +184,6 @@ function cycleType(cword::Codeword)
 end
 
 function makeperms()
-  rot=0xdb # index of the permutation 04321, a rotation
   ptable=OffsetVector(fill(0x0000,1024),-1)
   invperm=OffsetVector(fill(0x0000,1024),-1)
   id=Codeword([0,1,2,3,4,5])
@@ -245,6 +244,8 @@ function octinx(oct::Integer)
 end
 
 function makeperms2()
+  rot=0xdb # index of the permutation 04321, a rotation
+  id=Codeword([0,1,2,3,4,5])
   perm=OffsetMatrix(fill(0xfff,24,5),-1,-1)
   # There are 10 single swaps and 15 double swaps, 26 total involutions
   # including the identity. 5 of these are reflections. Of these, one is put
@@ -261,6 +262,11 @@ function makeperms2()
   , 0x052, 0x008, 0x0b4, 0x011
   , 0x025, 0x010, 0x168, 0x003
   ]
+  for i in 0:23
+    for j in 0:3
+      perm[i,j+1]=octinx(permoct(permute(permute(id,perm[i,j]),rot)))
+    end
+  end
   perm
 end
 
