@@ -19,7 +19,7 @@
 
 module MumzelCode
 using OffsetArrays,StaticArrays
-export Codeword,permcode,permoct,cycleType,makeperms,permstr
+export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -242,6 +242,26 @@ function octinx(oct::Integer)
     end
   end
   return -1
+end
+
+function makeperms2()
+  perm=OffsetMatrix(fill(0xfff,24,5),-1,-1)
+  # There are 10 single swaps and 15 double swaps, 26 total involutions
+  # including the identity. 5 of these are reflections. Of these, one is put
+  # at perm[1,0] (0x039, 12340), and the others in perm[1,1:4]. That leaves
+  # 22 involutions. The identity is put at perm[0,0], the multiplications by
+  # 2 and 3 at perm[3,0] and perm[2,0] respectively, and the rest of the
+  # involutions in perm[4:23,0]. All other permutations are computed by
+  # rotating these 24.
+  perm[:,0]=
+  [ 0x000, 0x039, 0x0d0, 0x016
+  , 0x04a, 0x001, 0x2d0, 0x006
+  , 0x094, 0x002, 0x02d, 0x00c
+  , 0x029, 0x004, 0x05a, 0x018
+  , 0x052, 0x008, 0x0b4, 0x011
+  , 0x025, 0x010, 0x168, 0x003
+  ]
+  perm
 end
 
 end # module MumzelCode
