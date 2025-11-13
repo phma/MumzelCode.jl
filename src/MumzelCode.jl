@@ -18,8 +18,8 @@
 ###########################################################################
 
 module MumzelCode
-using OffsetArrays,StaticArrays
-export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr
+using OffsetArrays,StaticArrays,Printf
+export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -61,6 +61,16 @@ const invLetter=invertLetter()
 # letters (0x00-0xff), permutations (0x0-0x4), or bit counts (0x2-0x5).
 # Permutations are written in reverse order (43210 is the identity).
 Codeword=SVector{6,UInt8}
+
+const c43434=Codeword([4,3,4,3,4,0])
+const c34343=Codeword([3,4,3,4,3,1])
+const c33435=Codeword([5,3,4,3,3,0])
+const c44342=Codeword([2,4,3,4,4,1])
+const c43425=Codeword([5,2,4,3,4,0])
+const c34352=Codeword([2,5,3,4,3,1])
+const c33525=Codeword([5,2,5,3,3,0])
+const c44252=Codeword([2,5,2,4,4,1])
+const id=Codeword([0,1,2,3,4,5])
 
 # Make the zel code table. Zel codes are 5-digit base-7 numbers.
 # All data zel codes have at most two zeros and do not consist
@@ -186,7 +196,6 @@ end
 function makeperms()
   ptable=OffsetVector(fill(0x0000,1024),-1)
   invperm=OffsetVector(fill(0x0000,1024),-1)
-  id=Codeword([0,1,2,3,4,5])
   for i in 0x000:0x3ff
     a=permute(id,i)
     ptable[i]=permoct(a)
@@ -245,7 +254,6 @@ end
 
 function makeperms2()
   rot=0xdb # index of the permutation 04321, a rotation
-  id=Codeword([0,1,2,3,4,5])
   perm=OffsetMatrix(fill(0xfff,24,5),-1,-1)
   # There are 10 single swaps and 15 double swaps, 26 total involutions
   # including the identity. 5 of these are reflections. Of these, one is put
@@ -268,6 +276,24 @@ function makeperms2()
     end
   end
   perm
+end
+
+const perm=makeperms2()
+
+"""
+    outComb()
+
+Output a table of the effects of permuting the four kinds of codewords.
+"""
+function outComb()
+  for i in 0:119
+    a=permoct(permute(id,perm[i%24,i÷24]))
+    b=permoct(permute(c43434,perm[i%24,i÷24]))
+    c=permoct(permute(c33435,perm[i%24,i÷24]))
+    d=permoct(permute(c43425,perm[i%24,i÷24]))
+    e=permoct(permute(c33525,perm[i%24,i÷24]))
+    @printf "%3d %03x %05o %05o %05o %05o %05o\n" i perm[i%24,i÷24] a b c d e
+  end
 end
 
 end # module MumzelCode
