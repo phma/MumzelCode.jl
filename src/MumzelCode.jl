@@ -346,4 +346,38 @@ const perm20=OffsetVector(
   , 0x0d0, 0x00d, 0x01a, 0x034, 0x068
   ],-1)
 
+function makeLetterPerm()
+  letterPerm=OffsetVector(fill(0xff,1024),-1)
+  for (i,c) in pairs(perm20[0:9])
+    p=permute(c43434,c)
+    letterPerm[permcode(p)]=i-1 # slicing an OffsetVector removes the offset
+    letterPerm[1023-permcode(p)]=i-1
+  end
+  for (i,c) in pairs(perm20)
+    p=permute(c33435,c)
+    letterPerm[permcode(p)]=i+64
+    letterPerm[1023-permcode(p)]=i+64
+  end
+  for (i,c) in pairs(perm60)
+    p=permute(c43425,c)
+    letterPerm[permcode(p)]=i+128
+    letterPerm[1023-permcode(p)]=i+128
+  end
+  for (i,c) in pairs(perm60[0:29])
+    p=permute(c33525,c)
+    letterPerm[permcode(p)]=i+191
+    letterPerm[1023-permcode(p)]=i+191
+  end
+  letterPerm
+end
+
+"""
+    letterPerm::OffsetVector{UInt8}
+
+Given the number returned by `permcode` (0-1023), returns an index to `perm20`
+or `perm60`. The maximum valid value is 0xdd, so if the top three bits are all 1,
+the permcode is invalid.
+"""
+const letterPerm=makeLetterPerm()
+
 end # module MumzelCode
