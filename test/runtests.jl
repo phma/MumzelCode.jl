@@ -18,9 +18,23 @@
 ###########################################################################
 
 using MumzelCode,Test
+using MumzelCode:c43434,c33435,c43425,c33525,perm60,perm20,permute
 
 @test MumzelCode.invLetter[0x65]==0x3a
 
 @test cycleType(Codeword([0,1,2,3,4,0]))==Codeword([1,1,1,1,1,0])
 @test cycleType(Codeword([0,4,1,2,3,0]))==Codeword([1,4,4,4,4,0])
 @test cycleType(Codeword([0,4,3,2,1,0]))==Codeword([1,2,6,6,2,0])
+
+function permutedAllDifferent(c::Codeword,v::AbstractVector{<:Integer})
+  s=Set{Codeword}()
+  for i in v
+    push!(s,permute(c,i))
+  end
+  length(s)==length(v)
+end
+
+@test permutedAllDifferent(c43425,perm60)
+@test permutedAllDifferent(c33525,perm60[0:29])
+@test permutedAllDifferent(c33435,perm20)
+@test permutedAllDifferent(c43434,perm20[0:9])
