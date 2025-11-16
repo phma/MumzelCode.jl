@@ -76,6 +76,11 @@ const id=Codeword([0,1,2,3,4,5])
 # All data zel codes have at most two zeros and do not consist
 # entirely of fives and sixes.
 # Codes with four or five zeros are reserved for idle channel codes.
+# Codes with a seven (which can't appear in a base-7 number) opposite two zeros,
+# with the other two digits being anything but 7, are framing errors of the
+# idle codes and are in the inverse zel table as 0x60nn, where nn is 25 (37)
+# if the receiver should skip a bit and 23 (35) if it should repeat a bit.
+# What to do in the case of 0*7*0 is to be determined.
 function makezel()
   zel=OffsetVector(fill(0xffff,16384),-1)
   invZel=OffsetVector(fill(0xffff,32768),-1)
@@ -101,6 +106,19 @@ function makezel()
     end
   end
   @assert n==16384
+  for i in 0:48
+    word=0o00700+(i%7)<<9+(i÷7)<<3
+    invZel[word]=0x6023 # TBD
+    word=(word<<3)&0o77770|(word>>12)&7
+    invZel[word]=0x6023
+    word=(word<<3)&0o77770|(word>>12)&7
+    invZel[word]=0x6023
+    word=(word<<3)&0o77770|(word>>12)&7
+    invZel[word]=0x6025
+    word=(word<<3)&0o77770|(word>>12)&7
+    invZel[word]=0x6025
+  end
+  invZel[0]=0x7024 # bit 12 set means in sync
   zel,invZel
 end
 
