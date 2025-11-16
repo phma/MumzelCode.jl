@@ -20,6 +20,7 @@
 module MumzelCode
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
+export halfEncode
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -57,7 +58,7 @@ end
 const invLetter=invertLetter()
 
 # [1:5] are the letters, [6] is the sign bit
-# The bytes can be the actual bit patters of letters (0x00-0xff), indices of
+# The bytes can be the actual bit patterns of letters (0x00-0xff), indices of
 # letters (0x00-0xff), permutations (0x0-0x4), or bit counts (0x2-0x5).
 # Permutations are written in reverse order (43210 is the identity).
 Codeword=SVector{6,UInt8}
@@ -397,5 +398,97 @@ or `perm60`. The maximum valid value is 0xdd, so if the top three bits are all 1
 the permcode is invalid.
 """
 const letterPerm=makeLetterPerm()
+
+# Encoding
+
+function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer)
+  # partA ranges from 0 to 625 and selects the kind of letters and permutations
+  # and the 5 or 3 of the last three letters before permutation.
+  # partB ranges from 0 to 249 and selects the 5 of the first two letters
+  # and the 10 of the permutation.
+  # zelPart ranges from 0 to 16384 and selects the 7 of all five letters.
+  # If zelPart=16384, that means the 7s are all 0, i.e. an idle code.
+  # sign inverts all the bits.
+  #
+  # The idle codes are half-encoded as follows:
+  # Idle code 0 (which ends with 0) is 111111000101010101010101010101100000.
+  # Sign bit=1
+  # 0000011 1010101 0101010 1010101 0011111
+  # 2-2-0 4-0-0 3-0-0 4-0-0 5-0-0
+  # 00000 is not a valid zel code (all 0s is used only for idle).
+  # 24345 is the 59th permutation (of 0-59, 12340) of 43425. Undoing the
+  # permutation gives 4-0-0 3-0-0 4-0-0 2-2-0 5-0-0.
+  # So partA=506 (last of the 6 groups of 45, plus 6 to get 020), partB=225
+  # (the 9 of 59, times 25), and zelPart=16384.
+  # Idle code 1 is 000000110101010101010101010110011111.
+  # Sign bit=0
+  # 0000011 0101010 1010101 0101011 0011111
+  # 2-2-0 3-0-0 4-0-0 4-1-0 5-0-0
+  # 23445 is the 16th permutation (of 0-59, 13420) of 43425. Undoing the
+  # permutation gives 4-0-0 3-0-0 4-1-0 2-2-0 5-0-0.
+  # So partA=335 (group 1 starts at 320, plus 15 to get 120), partB=150
+  # (the 6 of 16, times 25), and zelPart=16384.
+  perminx=permtype=zelCode=0
+  cw=[0,0,0,0,0,0]
+  @assert partA<625
+  if partA<125
+    perminx=0
+    permtype=10 # pattern 43434
+    cw[5]=8 # selects 4 bits set letters
+    cw[4]=0 # selects 3 bits set letters
+    cw[3]=8+partA÷25
+    cw[2]=0+(partA÷5)%5
+    cw[1]=8+partA%5
+  elseif partA<275
+    partA-=125
+    perminx=partA÷75
+    permtype=20 # pattern 33435
+    cw[5]=0
+    cw[4]=0
+    cw[3]=8+partA÷15
+    cw[2]=0+(partA÷3)%5
+    cw[1]=13+partA%3 # 13 selects 5 bits set letters, of which there are 3 columns
+  elseif partA<545
+    partA-=275
+    perminx=partA÷45
+    permtype=60 # pattern 43425
+    partA%=45
+    cw[5]=8
+    cw[4]=0
+    cw[3]=8+partA÷9
+    cw[2]=5+(partA÷3)/3 # 5 selects 2 bits set letters
+    cw[1]=13+partA%3
+  else
+    partA-=545
+    perminx=partA÷27
+    permtype=30 # pattern 33525
+    partA%=27
+    cw[5]=0
+    cw[4]=0
+    cw[3]=13+partA÷9
+    cw[2]=5+(partA÷3)/3
+    cw[1]=13+partA%3
+  end
+  perminx=perminx*10+partB÷25
+  cw[5]+=(partB÷5)/5
+  cw[4]+=partB%5
+  if zelPart>=0 && zelPart<16384
+    zelCode=zel[zelPart]
+  else
+    zelCode=0
+  end
+  for i in 0:4
+    cw[i+1]+=((zelCode>>(3*i))&7)<<4
+    cw[i+1]=letter[cw[i+1]]⊻(sign*127)
+  end
+  cw[6]=sign
+  cw=Codeword(cw)
+  if permtype%3==0
+    cw=permute(cw,perm60[perminx])
+  else
+    cw=permute(cw,perm20[perminx])
+  end
+  cw
+end
 
 end # module MumzelCode
