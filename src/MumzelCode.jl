@@ -20,7 +20,7 @@
 module MumzelCode
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
-export halfEncode
+export halfEncode,encode
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -470,7 +470,7 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     cw[1]=13+partA%3
   end
   perminx=perminx*10+partB÷25
-  cw[5]+=(partB÷5)/5
+  cw[5]+=(partB÷5)÷5
   cw[4]+=partB%5
   if zelPart>=0 && zelPart<16384
     zelCode=zel[zelPart]
@@ -489,6 +489,67 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     cw=permute(cw,perm20[perminx])
   end
   cw
+end
+
+function encode(n::Unsigned,bits::Integer)
+  # Encodes the following plaintexts:
+  # n		bits
+  # 32-bit int	32
+  # 24-bit int	24
+  # 16-bit int	16
+  # 8-bit int	8
+  # 0 to 1-127	1-7 (TBD)
+  # 0 or 1	0 (idle code)
+  zelPart=n&0x03fff
+  mumPart=(n&0x7fffffff)>>14
+  signBit=n>>31;
+  partA=626
+  partB=250
+  if bits==32
+    if signBit!=0
+      zelPart⊻=0x3fff	# flipping all bits of the input
+      mumPart⊻=0x1ffff	# flips all bits of the output
+    end
+  elseif bits==24
+    mumPart+=0x20000
+  elseif bits==16
+    mumPart+=0x20400
+  elseif bits==8
+    mumPart+=0x20404
+  elseif bits==0
+    mumPart=0x26354 # 156500
+  else
+    mumPart=0x40000
+  end
+  if mumPart<156500
+    if mumPart&255<224
+      if mumPart>>8<256
+	partA=(mumPart>>8)+275
+      elseif mumPart>>8<0x170
+	partA=(mumPart>>8)-256
+      else
+	partA=(mumPart>>8)+125-0x170
+	@assert partA<545
+      end
+      partB=mumPart&0xff
+    else
+      partA=(mumPart>>8)÷7+545
+      partB=((mumPart>>8)%7)*32+(mumPart&31)
+      @assert partA<626
+    end
+  else
+    if isodd(n)
+      partA=335
+      partB=150
+      signBit=0
+    else
+      partA=506
+      partB=225
+      signBit=1
+    end
+    zelPart=16384
+  end
+  halfEncode(signBit,partA,partB,zelPart)
 end
 
 end # module MumzelCode
