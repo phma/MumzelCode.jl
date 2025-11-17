@@ -443,6 +443,7 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     partA-=125
     perminx=partA÷75
     permtype=20 # pattern 33435
+    partA%=75
     cw[5]=0
     cw[4]=0
     cw[3]=8+partA÷15
@@ -470,7 +471,7 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     cw[1]=13+partA%3
   end
   perminx=perminx*10+partB÷25
-  cw[5]+=(partB÷5)÷5
+  cw[5]+=(partB÷5)%5
   cw[4]+=partB%5
   if zelPart>=0 && zelPart<16384
     zelCode=zel[zelPart]
