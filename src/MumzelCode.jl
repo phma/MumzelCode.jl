@@ -81,7 +81,9 @@ const id=Codeword([0,1,2,3,4,5])
 # with the other two digits being anything but 7, are framing errors of the
 # idle codes and are in the inverse zel table as 0x60nn, where nn is 25 (37)
 # if the receiver should skip a bit and 23 (35) if it should repeat a bit.
-# What to do in the case of 0*7*0 is to be determined.
+# For *7*00, 0*7*0, and 00*7*, it sets the counter so that the next frame has
+# the 7, which is at least 6 ones or 6 zeros in a row, centered on the parity
+# bit.
 function makezel()
   zel=OffsetVector(fill(0xffff,16384),-1)
   invZel=OffsetVector(fill(0xffff,32768),-1)
@@ -109,15 +111,15 @@ function makezel()
   @assert n==16384
   for i in 0:48
     word=0o00700+(i%7)<<9+(i÷7)<<3
-    invZel[word]=0x6023 # TBD
+    invZel[word]=0x6012
     word=(word<<3)&0o77770|(word>>12)&7
-    invZel[word]=0x6023
+    invZel[word]=0x6019
     word=(word<<3)&0o77770|(word>>12)&7
     invZel[word]=0x6023
     word=(word<<3)&0o77770|(word>>12)&7
     invZel[word]=0x6025
     word=(word<<3)&0o77770|(word>>12)&7
-    invZel[word]=0x6025
+    invZel[word]=0x602f
   end
   invZel[0]=0x7024 # bit 12 set means in sync
   zel,invZel
