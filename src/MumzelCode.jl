@@ -496,7 +496,7 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     cw[5]=8
     cw[4]=0
     cw[3]=8+partA÷9
-    cw[2]=5+(partA÷3)÷3 # 5 selects 2 bits set letters
+    cw[2]=5+(partA÷3)%3 # 5 selects 2 bits set letters
     cw[1]=13+partA%3
   else
     partA-=545
@@ -506,7 +506,7 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     cw[5]=0
     cw[4]=0
     cw[3]=13+partA÷9
-    cw[2]=5+(partA÷3)/3
+    cw[2]=5+(partA÷3)%3
     cw[1]=13+partA%3
   end
   perminx=perminx*10+partB÷25
