@@ -17,7 +17,7 @@
 #   along with Mumzel; if not, see <http://www.gnu.org/licenses/>.        #
 ###########################################################################
 
-using MumzelCode,Test
+using MumzelCode,Test,Printf
 using MumzelCode:c43434,c33435,c43425,c33525,perm60,perm20,permute
 
 @test MumzelCode.invLetter[0x65]==0x3a
@@ -38,3 +38,23 @@ end
 @test permutedAllDifferent(c33525,perm60[0:29])
 @test permutedAllDifferent(c33435,perm20)
 @test permutedAllDifferent(c43434,perm20[0:9])
+
+function testEncode1(n::Unsigned)
+  cw=encode(n,32)
+  int=codewordInt(cw)
+  if count_ones(int)!=18
+    @printf "%08x->%09x has %d bits\n" n int count_ones(int)
+  end
+  count_ones(int)==18
+end
+
+function testEncode()
+  for i in 0x0:0xffff
+    if !testEncode1(i*0x69969669)
+      return false
+    end
+  end
+  true
+end
+
+@test testEncode()
