@@ -20,7 +20,7 @@
 module MumzelCode
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
-export halfEncode,encode,codewordInt
+export halfEncode,encode,codewordInt,perm20Inverses,perm60Inverses
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -398,6 +398,32 @@ function makeLetterPerm()
     letterPerm[1023-permcode(p)]=i+191
   end
   letterPerm
+end
+
+function perm60Inverses()
+  for i in 0:59
+    for j in 0:59
+      if permute(permute(id,perm60[i]),perm60[j])==id
+	print('*')
+      else
+	print(' ')
+      end
+    end
+    println()
+  end
+end
+
+function perm20Inverses()
+  for i in 0:19
+    for j in 0:19
+      if permute(permute(id,perm20[i]),perm20[j])==id
+	print('*')
+      else
+	print(' ')
+      end
+    end
+    println()
+  end
 end
 
 """
