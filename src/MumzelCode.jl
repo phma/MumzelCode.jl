@@ -375,6 +375,9 @@ const perm20=OffsetVector(
   , 0x0d0, 0x00d, 0x01a, 0x034, 0x068
   ],-1)
 
+const invPerm60=map(x->invperm[x],perm60)
+const invPerm20=map(x->invperm[x],perm20)
+
 function makeLetterPerm()
   letterPerm=OffsetVector(fill(0xff,1024),-1)
   for (i,c) in pairs(perm20[0:9])
