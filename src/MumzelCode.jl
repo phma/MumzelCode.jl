@@ -224,7 +224,7 @@ end
 
 function makeperms()
   ptable=OffsetVector(fill(0x0000,1024),-1)
-  invperm=OffsetVector(fill(0x0000,1024),-1)
+  invPerm=OffsetVector(fill(0x0000,1024),-1)
   for i in 0x000:0x3ff
     a=permute(id,i)
     ptable[i]=permoct(a)
@@ -241,12 +241,12 @@ function makeperms()
       a=permute(id,i)
       for j in 0x000:0x3ff
 	if permute(a,j)==id
-	  invperm[j]=i
+	  invPerm[j]=i
 	end
       end
     end
   end
-  (ptable,invperm)
+  (ptable,invPerm)
 end
 
 """
@@ -257,15 +257,15 @@ canonical, and another ten-bit code for the same permutation, with the high bit
 set, if it isn't. Repeated lookup of codes with the high bit set will eventually
 find the canonical code.
 """
-const (ptable,invperm)=makeperms()
+const (ptable,invPerm)=makeperms()
 
 """
-    invperm::OffsetArray(::Vector{UInt16}, 0:1023)
+    invPerm::OffsetArray(::Vector{UInt16}, 0:1023)
 
 Given the ten-bit code for a permutation, look up the ten-bit code for its
 inverse. Looking up twice gets the canonical code for the original permutation.
 """
-invperm
+invPerm
 
 """
     octinx(oct::Integer)
@@ -375,8 +375,8 @@ const perm20=OffsetVector(
   , 0x0d0, 0x00d, 0x01a, 0x034, 0x068
   ],-1)
 
-const invPerm60=map(x->invperm[x],perm60)
-const invPerm20=map(x->invperm[x],perm20)
+const invPerm60=map(x->invPerm[x],perm60)
+const invPerm20=map(x->invPerm[x],perm20)
 
 function makeLetterPerm()
   letterPerm=OffsetVector(fill(0xff,1024),-1)
