@@ -467,7 +467,8 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
   # permutation gives 4-0-0 3-0-0 4-1-0 2-2-0 5-0-0.
   # So partA=335 (group 1 starts at 320, plus 15 to get 120), partB=150
   # (the 6 of 16, times 25), and zelPart=16384.
-  perminx=permtype=zelCode=0
+  perminx=permtype=0
+  zelCode=0x0000
   cw=[0,0,0,0,0,0]
   @assert partA<625
   if partA<125
@@ -515,7 +516,7 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
   if zelPart>=0 && zelPart<16384
     zelCode=zel[zelPart]
   else
-    zelCode=0
+    zelCode=0x0000
   end
   for i in 0:4
     cw[i+1]+=((zelCode>>(3*i))&7)<<4
@@ -540,9 +541,9 @@ function encode(n::Unsigned,bits::Integer)
   # 8-bit int	8
   # 0 to 1-127	1-7 (TBD)
   # 0 or 1	0 (idle code)
-  zelPart=n&0x03fff
-  mumPart=(n&0x7fffffff)>>14
-  signBit=n>>31;
+  zelPart=Int(n&0x03fff)
+  mumPart=Int((n&0x7fffffff)>>14)
+  signBit=Int(n>>31);
   partA=626
   partB=250
   if bits==32
@@ -557,9 +558,9 @@ function encode(n::Unsigned,bits::Integer)
   elseif bits==8
     mumPart+=0x20404
   elseif bits==0
-    mumPart=0x26354 # 156500
+    mumPart=156500
   else
-    mumPart=0x40000
+    mumPart=262144
   end
   if mumPart<156500
     if mumPart&255<224
