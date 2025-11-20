@@ -598,6 +598,8 @@ end
 function halfDecode(cw::Codeword)
   pc=permcode(map(UInt8∘count_ones,cw))
   lp=letterPerm[pc]
+  letterRows=map(x->invLetter[x]>>4,cw)
+  noPermute=findfirst(x->x==7,letterRows)<6 # the sign bit turns into 7
 end
 
 end # module MumzelCode
