@@ -20,7 +20,7 @@
 module MumzelCode
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
-export halfEncode,encode,codewordInt,perm20Inverses,perm60Inverses
+export halfEncode,encode,codewordInt,perm20Inverses,perm60Inverses,halfDecode
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -591,6 +591,13 @@ function encode(n::Unsigned,bits::Integer)
     zelPart=16384
   end
   halfEncode(signBit,partA,partB,zelPart)
+end
+
+# Decoding
+
+function halfDecode(cw::Codeword)
+  pc=permcode(map(UInt8∘count_ones,cw))
+  lp=letterPerm[pc]
 end
 
 end # module MumzelCode
