@@ -609,7 +609,9 @@ function halfDecode(cw::Codeword)
       cwup=permute(cw,invPerm60[lp&0x3f])
     end
   end
-  cwup
+  letterRows=map(x->invLetter[x]>>4,cwup)
+  letterColumns=map(x->invLetter[x]&0xf,cwup)
+  (letterRows,letterColumns)
 end
 
 end # module MumzelCode
