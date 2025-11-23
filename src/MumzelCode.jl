@@ -611,7 +611,8 @@ function halfDecode(cw::Codeword)
   end
   letterRows=map(x->invLetter[x]>>4,cwup)
   letterColumns=map(x->invLetter[x]&0xf,cwup)
-  (letterRows,letterColumns)
+  zelPart=invZel[permoct(letterRows)]
+  (zelPart,letterColumns)
 end
 
 end # module MumzelCode
