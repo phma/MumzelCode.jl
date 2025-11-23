@@ -597,22 +597,23 @@ end
 
 function halfDecode(cw::Codeword)
   pc=permcode(map(UInt8∘count_ones,cw))
-  lp=letterPerm[pc]
+  perminx=letterPerm[pc]
   letterRows=map(x->invLetter[x]>>4,cw)
-  noPermute=lp>0xdf || findfirst(x->x==7,letterRows)<6 # the sign bit turns into 7
+  noPermute=perminx>0xdf || findfirst(x->x==7,letterRows)<6 # the sign bit turns into 7
   if noPermute
     cwup=cw
   else
-    if lp<0x80
-      cwup=permute(cw,invPerm20[lp&0x3f])
+    if perminx<0x80
+      cwup=permute(cw,invPerm20[perminx&0x3f])
     else
-      cwup=permute(cw,invPerm60[lp&0x3f])
+      cwup=permute(cw,invPerm60[perminx&0x3f])
     end
   end
   letterRows=map(x->invLetter[x]>>4,cwup)
   letterColumns=map(x->invLetter[x]&0xf,cwup)
   zelPart=invZel[permoct(letterRows)]
-  (zelPart,letterColumns)
+  partB=perminx&63%10*25+(cwup[5]&7)*5+(cwup[4]&7)
+  (zelPart,partB,letterColumns)
 end
 
 end # module MumzelCode
