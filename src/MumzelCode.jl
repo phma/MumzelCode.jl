@@ -613,7 +613,17 @@ function halfDecode(cw::Codeword)
   letterColumns=map(x->invLetter[x]&0xf,cwup)
   zelPart=invZel[permoct(letterRows)]
   partB=perminx&63%10*25+(cwup[5]&7)*5+(cwup[4]&7)
-  (zelPart,partB,letterColumns)
+  if perminx<64 # pattern 43434
+    partA=(cwup[3]-8)*25+cwup[2]*5+cwup[1]-8
+  elseif perminx<128 # pattern 33435
+    partA=(cwup[3]-8)*15+cwup[2]*3+cwup[1]-13
+  elseif perminx<192 # pattern 43425
+    partA=(cwup[3]-8)*9+(cwup[2]-5)*3+cwup[1]-13
+  else # pattern 33525
+    partA=(cwup[3]-13)*9+(cwup[2]-5)*3+cwup[1]-13
+  end
+  signBit=cw[6]
+  (signBit,partA,partB,zelPart)
 end
 
 end # module MumzelCode
