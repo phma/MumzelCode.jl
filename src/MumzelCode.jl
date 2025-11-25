@@ -512,7 +512,7 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     cw[1]=13+partA%3
   end
   perminx=perminx*10+partB÷25
-  #println(perminx)
+  println(perminx)
   cw[5]+=(partB÷5)%5
   cw[4]+=partB%5
   if zelPart>=0 && zelPart<16384
@@ -620,13 +620,13 @@ function halfDecode(cw::Codeword)
     partA=(letterColumns[3]&7)*25+(letterColumns[2]&7)*5+(letterColumns[1]&7)
   elseif perminx<128 # pattern 33435
     partA=(letterColumns[3]&7)*15+(letterColumns[2]&7)*3+(letterColumns[1]&7-5)+125
-    partA+=(perminx-64)*75
+    partA+=(perminx-64)÷10*75
   elseif perminx<192 # pattern 43425
     partA=(letterColumns[3]&7)*9+(letterColumns[2]&7-5)*3+(letterColumns[1]&7-5)+275
-    partA+=(perminx-128)*45
+    partA+=(perminx-128)÷10*45
   else # pattern 33525
     partA=(letterColumns[3]&7-5)*9+(letterColumns[2]&7-5)*3+(letterColumns[1]&7-5)+545
-    partA+=(perminx-192)*27
+    partA+=(perminx-192)÷10*27
   end
   signBit=cw[6]
   (signBit,partA,partB,zelPart)
