@@ -628,6 +628,9 @@ function halfDecode(cw::Codeword)
     partA+=(perminx-192)÷10*27
   end
   signBit=cw[6]
+  if zelPart<0x4000 && sum(map(count_ones,cw))!=18
+    zelPart=0xffff
+  end
   (signBit,partA,partB,zelPart)
 end
 
