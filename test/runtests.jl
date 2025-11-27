@@ -18,7 +18,7 @@
 ###########################################################################
 
 using MumzelCode,Test,Printf
-using MumzelCode:c43434,c33435,c43425,c33525,perm60,perm20,permute
+using MumzelCode:c43434,c33435,c43425,c33525,perm60,perm20,permute,invZel
 
 @test MumzelCode.invLetter[0x65]==0x3a
 
@@ -58,3 +58,30 @@ function testEncode()
 end
 
 @test testEncode()
+
+function testDistinctMumPart(z::Integer)
+  zelPart=invZel[z]
+  i=0
+  j=0
+  mumDict=Dict{UInt64,UInt32}()
+  for mumPart in 0x0:0x1ffff
+    code=codewordInt(encode(mumPart<<14+zelPart,32))
+    if haskey(mumDict,code)
+      if i==j*j
+	@printf "%x has the same code as %x\n" mumDict[code] mumPart
+	j+=1
+      end
+      i+=1
+    end
+    mumDict[code]=mumPart
+  end
+  i==0
+end
+
+@test testDistinctMumPart(0o11111)
+@test testDistinctMumPart(0o22222)
+@test testDistinctMumPart(0o33333)
+@test testDistinctMumPart(0o44444)
+@test testDistinctMumPart(0o01234)
+@test testDistinctMumPart(0o12345)
+@test testDistinctMumPart(0o23456)

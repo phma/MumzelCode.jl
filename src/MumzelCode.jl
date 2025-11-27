@@ -21,7 +21,6 @@ module MumzelCode
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
 export halfEncode,encode,codewordInt,perm20Inverses,perm60Inverses,halfDecode
-export testDistinctMumPart
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -512,7 +511,7 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     cw[1]=13+partA%3
   end
   perminx=perminx*10+partB÷25
-  println(perminx)
+  #println(perminx)
   cw[5]+=(partB÷5)%5
   cw[4]+=partB%5
   if zelPart>=0 && zelPart<16384
@@ -615,7 +614,7 @@ function halfDecode(cw::Codeword)
   letterColumns=map(x->invLetter[x]&0xf,cwup)
   zelPart=invZel[permoct(letterRows)]
   partB=perminx&63%10*25+(letterColumns[5]&7)*5+(letterColumns[4]&7)
-  println(letterColumns,' ',perminx)
+  #println(letterColumns,' ',perminx)
   if perminx<64 # pattern 43434
     partA=(letterColumns[3]&7)*25+(letterColumns[2]&7)*5+(letterColumns[1]&7)
   elseif perminx<128 # pattern 33435
@@ -630,25 +629,6 @@ function halfDecode(cw::Codeword)
   end
   signBit=cw[6]
   (signBit,partA,partB,zelPart)
-end
-
-function testDistinctMumPart()
-  zelPart=invZel[0o33333]
-  i=0
-  j=0
-  mumDict=Dict{UInt64,UInt32}()
-  for mumPart in 0x0:0x1ffff
-    code=codewordInt(encode(mumPart<<14+zelPart,32))
-    if haskey(mumDict,code)
-      if i==j*j
-	@printf "%x has the same code as %x\n" mumDict[code] mumPart
-	j+=1
-      end
-      i+=1
-    end
-    mumDict[code]=mumPart
-  end
-  i==0
 end
 
 end # module MumzelCode
