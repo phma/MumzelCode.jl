@@ -581,7 +581,7 @@ function encode(n::Unsigned,bits::Integer)
       @assert partA<626
     end
   else
-    if isodd(n)
+    if isodd(bits)
       partA=335
       partB=150
       signBit=0
