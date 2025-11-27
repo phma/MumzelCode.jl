@@ -20,7 +20,8 @@
 module MumzelCode
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
-export halfEncode,encode,codewordInt,perm20Inverses,perm60Inverses,halfDecode
+export halfEncode,encode,codewordInt,perm20Inverses,perm60Inverses
+export halfDecode,decode
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -632,6 +633,13 @@ function halfDecode(cw::Codeword)
     zelPart=0xffff
   end
   (signBit,partA,partB,zelPart)
+end
+
+function decode(cw::Codeword,flip::Bool)
+  if flip
+    cw=Codeword([cw[1]⊻0x7f,cw[2]⊻0x7f,cw[3]⊻0x7f,cw[4]⊻0x7f,cw[5]⊻0x7f,cw[6]⊻0x1])
+  end
+  (signBit,partA,partB,zelPart)=halfDecode(cw)
 end
 
 end # module MumzelCode
