@@ -635,11 +635,36 @@ function halfDecode(cw::Codeword)
   (signBit,partA,partB,zelPart)
 end
 
+"""
+    decode(cw::Codeword,flip::Bool)
+
+Decodes a `Codeword`. The return value is `(n,bits,codeBits,upsideDown)` where
+
+- `bits`==0: it's a syncword or framing error thereof
+- `bits`∈[1,32]: `n` is data
+- `bits`>32: `n` is a control code
+- `bits`<0: it's an error.
+
+`codeBits` is the number of bits till the next frame (normally 36); `upsideDown` should be xored into the next `flip`.
+"""
 function decode(cw::Codeword,flip::Bool)
   if flip
     cw=Codeword([cw[1]⊻0x7f,cw[2]⊻0x7f,cw[3]⊻0x7f,cw[4]⊻0x7f,cw[5]⊻0x7f,cw[6]⊻0x1])
   end
   (signBit,partA,partB,zelPart)=halfDecode(cw)
+  codeBits=36 # wait 36 bits for next frame, unless it's a framing error
+  n=0
+  upsideDown=(partA==335 && partB==150 && signBit==1) ||
+	     (partA==506 && partB==225 && signBit==0)
+  if zelPart==0xffff # it's undecodable
+    bits=64
+  elseif zelPart<0x6000
+    bits=0
+    codeBits=Int(zelPart&0xff)
+  else
+    bits=32
+  end
+  (n,bits,codeBits,upsideDown)
 end
 
 end # module MumzelCode
