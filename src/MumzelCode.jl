@@ -672,16 +672,16 @@ function decode(cw::Codeword,flip::Bool)
     end
   else
     if partA<545
-      if partA<125
+      if partA<125		# pattern 43434
 	mumPart=partA+0x100
-      elseif partA<275
+      elseif partA<275		# pattern 33435
 	mumPart=partA-125+0x170
-      else
+      else			# pattern 43425
 	mumPart=partA-275
       end
       mumPart=mumPart*256+partB
-    else
-      mumPart=(partA-545)*7+partB
+    else			# pattern 33525
+      mumPart=((partA-545)*7+(partB>>5))<<8+(partB&31)+0xe0
     end
     n=mumPart<<14+zelPart
     if isodd(signBit)
