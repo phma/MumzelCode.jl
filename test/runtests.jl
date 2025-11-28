@@ -45,7 +45,11 @@ function testEncode1(n::Unsigned)
   if count_ones(int)!=18
     @printf "%08x->%09x has %d bits\n" n int count_ones(int)
   end
-  count_ones(int)==18
+  dec,bits,codeBits,upsideDown=decode(cw,false)
+  if dec!=n
+    @printf "%08x->%09x misdecoded as %08x\n" n int dec
+  end
+  count_ones(int)==18 && dec==n && bits==32 && codeBits==36
 end
 
 function testEncode()
