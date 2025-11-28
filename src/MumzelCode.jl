@@ -615,6 +615,8 @@ function halfDecode(cw::Codeword)
   letterColumns=map(x->invLetter[x]&0xf,cwup)
   zelPart=invZel[permoct(letterRows)]
   partB=perminx&63%10*25+(letterColumns[5]&7)*5+(letterColumns[4]&7)
+  # partB ranges from 0 to 249, but only 0-223 is valid,
+  # except syncword 1, which is 225.
   #println(letterColumns,' ',perminx)
   if perminx<64 # pattern 43434
     partA=(letterColumns[3]&7)*25+(letterColumns[2]&7)*5+(letterColumns[1]&7)
@@ -658,10 +660,33 @@ function decode(cw::Codeword,flip::Bool)
 	     (partA==506 && partB==225 && signBit==0)
   if zelPart==0xffff # it's undecodable
     bits=64
-  elseif zelPart<0x6000
+  elseif zelPart>0x6000 # idle code, syncword (including framing error)
     bits=0
     codeBits=Int(zelPart&0xff)
+    if partA==335 && partB==150
+      n=1
+    elseif partA==506 && partB==225
+      n=0
+    else
+      n=65535
+    end
   else
+    if partA<545
+      if partA<125
+	mumPart=partA+0x100
+      elseif partA<275
+	mumPart=partA-125+0x170
+      else
+	mumPart=partA-275
+      end
+      mumPart=mumPart*256+partB
+    else
+      mumPart=(partA-545)*7+partB
+    end
+    n=mumPart<<14+zelPart
+    if isodd(signBit)
+      n⊻=0xffffffff
+    end
     bits=32
   end
   (n,bits,codeBits,upsideDown)
