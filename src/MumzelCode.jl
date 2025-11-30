@@ -586,6 +586,12 @@ function encode(n::Unsigned,bits::Integer)
   else
     mumPart=262144
   end
+  if bits>1 && n>>bits>0
+    mumPart=262144
+  end
+  if mumPart==262144
+    throw(DomainError((n,bits),"encode: Too many bits, or the number of bits is invalid."))
+  end
   if mumPart<156500
     if mumPart&255<224
       if mumPart>>8<256
@@ -603,7 +609,7 @@ function encode(n::Unsigned,bits::Integer)
       @assert partA<626
     end
   else
-    if isodd(bits)
+    if isodd(n)
       partA=335
       partB=150
       signBit=0
