@@ -544,6 +544,10 @@ function encode(n::Unsigned,bits::Integer)
   # 8-bit int	8
   # 0 to 1-127	1-7
   # 0 or 1	0 (idle code)
+  # Control codes range from 0x0000000 to 0x0ffffff, which could be used in
+  # pairs for MAC addresses, then 0x1000000 to 0x177ffff with sign bit 1, then
+  # 0x1780000 to 0x1eefe01; the code for 0x1eefe02 would be the same as for
+  # a single one-bit.
   zelPart=Int(n&0x03fff)
   mumPart=Int((n&0x7fffffff)>>14)
   signBit=Int(n>>31);
@@ -553,6 +557,19 @@ function encode(n::Unsigned,bits::Integer)
     if signBit!=0
       zelPart⊻=0x3fff	# flipping all bits of the input
       mumPart⊻=0x1ffff	# flips all bits of the output
+    end
+  elseif bits==25
+    if n>0x177ffff
+      signBit=0
+      ninv=0x2efffff-n
+      zelPart=Int(ninv&0x03fff)
+      mumPart=Int((ninv&0x7fffffff)>>14)+0x20000
+      if n>0x1eefe01
+	mumPart=262144
+      end
+    else
+      signBit=1
+      mumPart+=0x20000
     end
   elseif bits==24
     mumPart+=0x20000
@@ -586,7 +603,7 @@ function encode(n::Unsigned,bits::Integer)
   else
     mumPart=262144
   end
-  if bits>1 && n>>bits>0
+  if bits>0 && n>>bits>0
     mumPart=262144
   end
   if mumPart==262144
