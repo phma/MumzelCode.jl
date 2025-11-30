@@ -538,10 +538,11 @@ function encode(n::Unsigned,bits::Integer)
   # Encodes the following plaintexts:
   # n		bits
   # 32-bit int	32
+  # Control	25 (TBD)
   # 24-bit int	24
   # 16-bit int	16
   # 8-bit int	8
-  # 0 to 1-127	1-7 (TBD)
+  # 0 to 1-127	1-7
   # 0 or 1	0 (idle code)
   zelPart=Int(n&0x03fff)
   mumPart=Int((n&0x7fffffff)>>14)
@@ -559,6 +560,27 @@ function encode(n::Unsigned,bits::Integer)
     mumPart+=0x20400
   elseif bits==8
     mumPart+=0x20404
+  elseif bits==7
+    mumPart+=0x20404
+    zelPart+=0x100
+  elseif bits==6
+    mumPart+=0x20404
+    zelPart+=0x180
+  elseif bits==5
+    mumPart+=0x20404
+    zelPart+=0x1c0
+  elseif bits==4
+    mumPart+=0x20404
+    zelPart+=0x1e0
+  elseif bits==3
+    mumPart+=0x20404
+    zelPart+=0x1f0
+  elseif bits==2
+    mumPart+=0x20404
+    zelPart+=0x1f8
+  elseif bits==1
+    mumPart+=0x20404
+    zelPart+=0x1fc
   elseif bits==0
     mumPart=156500
   else
