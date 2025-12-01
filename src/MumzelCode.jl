@@ -669,6 +669,7 @@ end
 
 function halfDecode(cw::Codeword)
   pc=permcode(map(UInt8∘count_ones,cw))
+  pc=min(max(pc,0),1023)
   perminx=letterPerm[pc]
   letterRows=map(x->invLetter[x]>>4,cw)
   noPermute=perminx>0xdf || findfirst(x->x==7,letterRows)<6 # the sign bit turns into 7
