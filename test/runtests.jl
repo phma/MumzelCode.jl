@@ -68,7 +68,7 @@ function testDistinctMumPart(z::Integer)
   i=0
   j=0
   mumDict=Dict{UInt64,UInt32}()
-  for mumPart in 0x0:0x1ffff
+  for mumPart in 0x0:0x205ff
     code=codewordInt(encode(mumPart<<14+zelPart,32))
     if haskey(mumDict,code)
       if i==j*j
