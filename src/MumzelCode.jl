@@ -21,7 +21,7 @@ module MumzelCode
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
 export halfEncode,encode,codewordInt,intCodeword,perm20Inverses,perm60Inverses
-export halfDecode,decode,appendCodeword!
+export halfDecode,decode,appendCodeword!,decodeStream1
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -772,6 +772,10 @@ function decode(cw::Codeword,flip::Bool)
     bits=32
   end
   (n,bits,codeBits,upsideDown)
+end
+
+function decodeStream1(stream::Vector{UInt8},offset::Integer,flip::Bool)
+  decode(extractCodeword(stream,offset),flip)
 end
 
 end # module MumzelCode
