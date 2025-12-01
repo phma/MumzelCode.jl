@@ -21,7 +21,7 @@ module MumzelCode
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
 export halfEncode,encode,codewordInt,intCodeword,perm20Inverses,perm60Inverses
-export halfDecode,decode
+export halfDecode,decode,appendCodeword!
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -90,6 +90,21 @@ function intCodeword(int::Integer)
   end
   cw[6]&=1
   Codeword(cw)
+end
+
+function appendCodeword!(stream::Vector{UInt8},cw::Codeword)
+  int=codewordInt(cw)
+  if length(stream)%3==0
+    for i in 0:4
+      push!(stream,(int>>(i*8))&0xff)
+    end
+  else
+    stream[end]=stream[end]&0xf|((int&0xf)<<4)
+    for i in 0:3
+      push!(stream,(int>>(i*8+4))&0xff)
+    end
+  end
+  stream
 end
 
 # Make the zel code table. Zel codes are 5-digit base-7 numbers.
