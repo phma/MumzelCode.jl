@@ -181,8 +181,8 @@ end
 
 Given the number of 1-bits in each letter of a codeword, returns a 10-bit number
 which can be looked up in a table to find how to undo the permutation and unpack
-the bits. If a letter has <2 1-bits, returns a negative number. If a letter has
->5 ones, returns garbage.
+the bits. If a letter has <2 1-bits, returns a negative number. If a letter
+has >5 ones, returns garbage.
 """
 function permcode(cword::Codeword)
   pc=0
