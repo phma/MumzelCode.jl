@@ -21,7 +21,7 @@ module MumzelCode
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
 export halfEncode,encode,codewordInt,intCodeword,perm20Inverses,perm60Inverses
-export halfDecode,decode,appendCodeword!,decodeStream1
+export halfDecode,decode,appendCodeword!,decodeStream
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -111,11 +111,15 @@ function extractCodeword(stream::Vector{UInt8},offset::Integer)
   int=zero(UInt64)
   byte=(offset>>3)+1
   bit=offset&7
-  for i in 0:(4+(bit>3))
+  for i in 0:(4+(bit>4))
     int+=UInt64(stream[i+byte])<<(8*i)
   end
   int>>=bit
   intCodeword(int)
+end
+
+function validOffset(stream::Vector{UInt8},offset::Integer)
+  offset>=0 && offset+35<length(stream)*8
 end
 
 # Make the zel code table. Zel codes are 5-digit base-7 numbers.
@@ -776,6 +780,16 @@ end
 
 function decodeStream1(stream::Vector{UInt8},offset::Integer,flip::Bool)
   decode(extractCodeword(stream,offset),flip)
+end
+
+function decodeStream(stream::Vector{UInt8},offset::Integer,flip::Bool)
+  ret=Tuple{Int,Int,Int,Bool}[]
+  while validOffset(stream,offset)
+    push!(ret,decodeStream1(stream,offset,flip))
+    offset+=ret[end][3]
+    flip⊻=ret[end][4]
+  end
+  ret
 end
 
 end # module MumzelCode
