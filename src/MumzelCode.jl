@@ -107,6 +107,17 @@ function appendCodeword!(stream::Vector{UInt8},cw::Codeword)
   stream
 end
 
+function extractCodeword(stream::Vector{UInt8},offset::Integer)
+  int=zero(UInt64)
+  byte=(offset>>3)+1
+  bit=offset&7
+  for i in 0:(4+(bit>3))
+    int+=UInt64(stream[i+byte])<<(8*i)
+  end
+  int>>=bit
+  intCodeword(int)
+end
+
 # Make the zel code table. Zel codes are 5-digit base-7 numbers.
 # All data zel codes have at most two zeros and do not consist
 # entirely of fives and sixes.
