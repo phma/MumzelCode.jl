@@ -770,10 +770,50 @@ function decode(cw::Codeword,flip::Bool)
       mumPart=((partA-545)*7+(partB>>5))<<8+(partB&31)+0xe0
     end
     n=mumPart<<14+zelPart
-    if isodd(signBit)
-      n⊻=0xffffffff
+    if n>=0x80000000
+      n-=0x80000000
+      if iseven(signBit) && n>0x10101fd
+	n=0x2efffff-n
+	signBit=1
+      end
+      if isodd(signBit)
+	bits=25
+      elseif n>0x10101fc
+	n-=0x10101fc
+	bits=1
+      elseif n>0x10101f8
+	n-=0x10101f8
+	bits=2
+      elseif n>0x10101f0
+	n-=0x10101f0
+	bits=3
+      elseif n>0x10101e0
+	n-=0x10101e0
+	bits=4
+      elseif n>0x10101c0
+	n-=0x10101c0
+	bits=5
+      elseif n>0x1010180
+	n-=0x1010180
+	bits=6
+      elseif n>0x1010100
+	n-=0x1010100
+	bits=7
+      elseif n>0x1010000
+	n-=0x1010000
+	bits=8
+      elseif n>0x1000000
+	n-=0x1000000
+	bits=16
+      else
+	bits=25
+      end
+    else
+      if isodd(signBit)
+	n⊻=0xffffffff
+      end
+      bits=32
     end
-    bits=32
   end
   (n,bits,codeBits,upsideDown)
 end
