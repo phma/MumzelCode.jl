@@ -727,8 +727,8 @@ end
 Decodes a `Codeword`. The return value is `(n,bits,codeBits,upsideDown)` where
 
 - `bits`==0: it's a syncword or framing error thereof
-- `bits`∈[1,32]: `n` is data
-- `bits`>32: `n` is a control code
+- `bits`∈[1,32]\25: `n` is data
+- `bits`==25: `n` is a control code
 - `bits`<0: it's an error.
 
 `codeBits` is the number of bits till the next frame (normally 36); `upsideDown` should be xored into the next `flip`.
@@ -742,6 +742,13 @@ function decode(cw::Codeword,flip::Bool)
   n=0
   upsideDown=(partA==335 && partB==150 && signBit==1) ||
 	     (partA==506 && partB==225 && signBit==0)
+  # Possible errors:
+  # Code is not bit-balanced
+  # Zel code invalid
+  # Bit count of any letter is 0, 1, 6, or 7, except framing error
+  # Bit count pattern is 42525
+  # Part A is out of range for the bit count pattern
+  # Part B is more than 223, except syncword
   if zelPart==0xffff # it's undecodable
     bits=64
   elseif zelPart>0x6000 # idle code, syncword (including framing error)
