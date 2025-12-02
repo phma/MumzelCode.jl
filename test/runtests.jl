@@ -39,8 +39,8 @@ end
 @test permutedAllDifferent(c33435,perm20)
 @test permutedAllDifferent(c43434,perm20[0:9])
 
-function testEncode1(n::Unsigned)
-  cw=encode(n,32)
+function testEncode1(n::Unsigned,b::Integer)
+  cw=encode(n,b)
   int=codewordInt(cw)
   if count_ones(int)!=18
     @printf "%08x->%09x has %d bits\n" n int count_ones(int)
@@ -49,12 +49,12 @@ function testEncode1(n::Unsigned)
   if dec!=n
     @printf "%08x->%09x misdecoded as %08x\n" n int dec
   end
-  count_ones(int)==18 && dec==n && bits==32 && codeBits==36
+  count_ones(int)==18 && dec==n && bits==b && codeBits==36
 end
 
 function testEncode()
   for i in 0x0:0xffff
-    if !testEncode1(i*0x69969669)
+    if !testEncode1(i*0x69969669,32)
       return false
     end
   end
