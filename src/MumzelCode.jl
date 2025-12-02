@@ -750,7 +750,7 @@ function decode(cw::Codeword,flip::Bool)
   # Part A is out of range for the bit count pattern
   # Part B is more than 223, except syncword
   if zelPart==0xffff # it's undecodable
-    bits=64
+    bits=-1
   elseif zelPart>0x6000 # idle code, syncword (including framing error)
     bits=0
     codeBits=Int(zelPart&0xff)
@@ -758,8 +758,10 @@ function decode(cw::Codeword,flip::Bool)
       n=1
     elseif partA==506 && partB==225
       n=0
+    elseif zelPart==0x7024
+      bits=-1 # in sync, but neither valid syncword
     else
-      n=65535
+      n=65535 # framing error
     end
   else
     if partA<545
