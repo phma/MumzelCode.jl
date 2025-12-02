@@ -89,3 +89,25 @@ end
 @test testDistinctMumPart(0o01234)
 @test testDistinctMumPart(0o12345)
 @test testDistinctMumPart(0o23456)
+
+function testSyncWord()
+  stream=UInt8[]
+  for i in 1:5 # It takes 8 syncwords to synchronize and 1 more to flip.
+    appendCodeword!(stream,encode(0x1,0))
+    appendCodeword!(stream,encode(0x0,0))
+  end
+  appendCodeword!(stream,encode(0x636e7973,32))
+  for i in 0:72
+    dec=decodeStream(stream,i,true)
+    if dec[end][1]!=0x636e7973
+      return false
+    end
+    dec=decodeStream(stream,i,false)
+    if dec[end][1]!=0x636e7973
+      return false
+    end
+  end
+  true
+end
+
+@test testSyncWord()
