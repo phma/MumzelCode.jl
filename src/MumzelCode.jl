@@ -552,7 +552,6 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     cw[1]=13+partA%3
   end
   perminx=perminx*10+partB÷25
-  #println(perminx)
   cw[5]+=(partB÷5)%5
   cw[4]+=partB%5
   if zelPart>=0 && zelPart<16384
@@ -703,7 +702,6 @@ function halfDecode(cw::Codeword)
   partB=perminx&63%10*25+(letterColumns[5]&7)*5+(letterColumns[4]&7)
   # partB ranges from 0 to 249, but only 0-223 is valid,
   # except syncword 1, which is 225.
-  #println(letterColumns,' ',perminx)
   if perminx<64 # pattern 43434
     partA=(letterColumns[3]&7)*25+(letterColumns[2]&7)*5+(letterColumns[1]&7)
   elseif perminx<128 # pattern 33435
