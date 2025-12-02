@@ -58,6 +58,56 @@ function testEncode()
       return false
     end
   end
+  for i in 0x0:0xffff
+    if !testEncode1((i*0x131ec09)%0x1eefe01,25)
+      return false
+    end
+  end
+  for i in 0x0:0xffff
+    if !testEncode1(i,16)
+      return false
+    end
+  end
+  for i in 0x0:0xff
+    if !testEncode1(i,8)
+      return false
+    end
+  end
+  for i in 0x0:0x7f
+    if !testEncode1(i,7)
+      return false
+    end
+  end
+  for i in 0x0:0x3f
+    if !testEncode1(i,6)
+      return false
+    end
+  end
+  for i in 0x0:0x1f
+    if !testEncode1(i,5)
+      return false
+    end
+  end
+  for i in 0x0:0xf
+    if !testEncode1(i,4)
+      return false
+    end
+  end
+  for i in 0x0:0x7
+    if !testEncode1(i,3)
+      return false
+    end
+  end
+  for i in 0x0:0x3
+    if !testEncode1(i,2)
+      return false
+    end
+  end
+  for i in 0x0:0x1
+    if !testEncode1(i,1)
+      return false
+    end
+  end
   true
 end
 

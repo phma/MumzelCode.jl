@@ -778,35 +778,35 @@ function decode(cw::Codeword,flip::Bool)
       end
       if isodd(signBit)
 	bits=25
-      elseif n>0x10101fc
+      elseif n>=0x10101fc
 	n-=0x10101fc
 	bits=1
-      elseif n>0x10101f8
+      elseif n>=0x10101f8
 	n-=0x10101f8
 	bits=2
-      elseif n>0x10101f0
+      elseif n>=0x10101f0
 	n-=0x10101f0
 	bits=3
-      elseif n>0x10101e0
+      elseif n>=0x10101e0
 	n-=0x10101e0
 	bits=4
-      elseif n>0x10101c0
+      elseif n>=0x10101c0
 	n-=0x10101c0
 	bits=5
-      elseif n>0x1010180
+      elseif n>=0x1010180
 	n-=0x1010180
 	bits=6
-      elseif n>0x1010100
+      elseif n>=0x1010100
 	n-=0x1010100
 	bits=7
-      elseif n>0x1010000
+      elseif n>=0x1010000
 	n-=0x1010000
 	bits=8
-      elseif n>0x1000000
+      elseif n>=0x1000000
 	n-=0x1000000
 	bits=16
       else
-	bits=25
+	bits=24
       end
     else
       if isodd(signBit)
