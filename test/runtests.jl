@@ -161,3 +161,11 @@ function testSyncWord()
 end
 
 @test testSyncWord()
+
+function testInvalidCodeword(cw::Codeword)
+  dec,bits,codeBits,upsideDown=decode(cw,false)
+  bits<0
+end
+
+@test testInvalidCodeword(Codeword([0x1f,0x54,0x7f,0x7f,0x55,0]))
+# This has a run of 16 bits. Real Mumzel has no run longer than 11.
