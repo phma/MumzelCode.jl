@@ -822,6 +822,9 @@ function decode(cw::Codeword,flip::Bool)
       bits=32
     end
   end
+  if partB>223 && bits>0
+    bits=-1
+  end
   (n,bits,codeBits,upsideDown)
 end
 

@@ -167,5 +167,11 @@ function testInvalidCodeword(cw::Codeword)
   bits<0
 end
 
-@test testInvalidCodeword(Codeword([0x1f,0x54,0x7f,0x7f,0x55,0]))
+function testInvalidCodeword(cw::Vector{<:Integer})
+  testInvalidCodeword(Codeword(cw))
+end
+
+@test testInvalidCodeword([0x1f,0x54,0x7f,0x7f,0x55,0])
 # This has a run of 16 bits. Real Mumzel has no run longer than 11.
+@test testInvalidCodeword([0x46,0x36,0x17,0x4e,0x2c,0])
+# partB is 249; the maximum valid is 223, except for syncwords.
