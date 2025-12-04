@@ -771,6 +771,9 @@ function decode(cw::Codeword,flip::Bool)
 	mumPart=partA-125+0x170
       else			# pattern 43425
 	mumPart=partA-275
+	if mumPart>255
+	  mumPart=-1
+	end
       end
       mumPart=mumPart*256+partB
     else			# pattern 33525
@@ -822,7 +825,7 @@ function decode(cw::Codeword,flip::Bool)
       bits=32
     end
   end
-  if partB>223 && bits>0
+  if (partB>223 && bits>0) || n<0
     bits=-1
   end
   (n,bits,codeBits,upsideDown)

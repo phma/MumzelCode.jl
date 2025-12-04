@@ -175,3 +175,5 @@ end
 # This has a run of 16 bits. Real Mumzel has no run longer than 11.
 @test testInvalidCodeword([0x46,0x36,0x17,0x4e,0x2c,0])
 # partB is 249; the maximum valid is 223, except for syncwords.
+@test testInvalidCodeword([0x16,0x69,0x4a,0x6d,0x12,1])
+# This is row 265 of the 270 rows of pattern 43425, but only 256 rows are used.
