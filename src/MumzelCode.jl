@@ -781,7 +781,7 @@ function decode(cw::Codeword,flip::Bool)
       n-=0x80000000
       if iseven(signBit) && n>0x10101fd
 	n=0x2efffff-n
-	signBit=1
+	signBit=0x1
       end
       if isodd(signBit)
 	bits=25
