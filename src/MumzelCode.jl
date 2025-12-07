@@ -767,6 +767,9 @@ function decode(cw::Codeword,flip::Bool)
     if partA<545
       if partA<125		# pattern 43434
 	mumPart=partA+0x100
+	if mumPart>0x16f
+	  mumPart=-1
+	end
       elseif partA<275		# pattern 33435
 	mumPart=partA-125+0x170
       else			# pattern 43425
