@@ -845,4 +845,9 @@ function decodeStream(stream::Vector{UInt8},offset::Integer,flip::Bool)
   ret
 end
 
+println("Mumzel Code © 2025 Pierre Abbat")
+println("This program is free software; you can redistribute it and/or modify")
+println("it under the terms of the GNU General Public License version 3 or later.")
+println("Tables output by this program are in the public domain.")
+
 end # module MumzelCode
