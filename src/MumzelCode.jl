@@ -511,7 +511,7 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
   perminx=permtype=0
   zelCode=0x0000
   cw=[0,0,0,0,0,0]
-  @assert partA<625
+  @assert partA<=625
   if partA<125
     perminx=0
     permtype=10 # pattern 43434
@@ -771,7 +771,7 @@ function decode(cw::Codeword,flip::Bool)
 	  mumPart=-1
 	end
       elseif partA<275		# pattern 33435
-	mumPart=partA-125+0x170
+	mumPart=partA-125+0x170 # all 150 rows are used, no check needed
       else			# pattern 43425
 	mumPart=partA-275
 	if mumPart>255
@@ -781,6 +781,9 @@ function decode(cw::Codeword,flip::Bool)
       mumPart=mumPart*256+partB
     else			# pattern 33525
       mumPart=((partA-545)*7+(partB>>5))<<8+(partB&31)+0xe0
+      if partA-545>73
+	mumPart=-1
+      end
     end
     n=mumPart<<14+zelPart
     if n>=0x80000000

@@ -178,4 +178,9 @@ end
 @test testInvalidCodeword([0x58,0x4a,0x16,0x35,0x69,1])
 # This is row 120 of the 125 rows of pattern 43434, but only 112 rows are used.
 @test testInvalidCodeword([0x16,0x69,0x4a,0x6d,0x12,1])
+# No need to test pattern 33435, all 150 rows are used.
 # This is row 265 of the 270 rows of pattern 43425, but only 256 rows are used.
+@test testInvalidCodeword([0x76,0x09,0x69,0x09,0x69,1])
+# This is row 80 of the 81 rows of pattern 33525, but only 74 rows are used.
+# The 74 rows of 224 are resized into 518 rows of 32, which go up
+# to the right of the other three patterns.
