@@ -21,7 +21,12 @@ module MumzelCode
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
 export halfEncode,encode,codewordInt,intCodeword,perm20Inverses,perm60Inverses
-export halfDecode,decode,appendCodeword!,decodeStream
+export halfDecode,decode,appendCodeword!,decodeStream,outputTables
+
+println("Mumzel Code © 2025 Pierre Abbat")
+println("This program is free software; you can redistribute it and/or modify")
+println("it under the terms of the GNU General Public License version 3 or later.")
+println("Tables output by this program are in the public domain.")
 
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
@@ -863,9 +868,22 @@ function decodeStream(stream::Vector{UInt8},offset::Integer,flip::Bool)
   ret
 end
 
-println("Mumzel Code © 2025 Pierre Abbat")
-println("This program is free software; you can redistribute it and/or modify")
-println("it under the terms of the GNU General Public License version 3 or later.")
-println("Tables output by this program are in the public domain.")
+###########################################################################
+#
+# Table output
+#
+###########################################################################
+
+function outTableVerilog(tableName::String,table::OffsetVector{<:Integer},width::Integer)
+  indexTopBit=ceil(Int,log2(length(table)))-1
+  @printf "reg [%d:0] %s[%d:0];\n" width-1 tableName indexTopBit
+  for i in eachindex(table)
+    @printf "%s[%d]=%d'h%x;\n" tableName i width table[i]
+  end
+end
+
+function outputTables()
+  outTableVerilog("letter",letter,8)
+end
 
 end # module MumzelCode
