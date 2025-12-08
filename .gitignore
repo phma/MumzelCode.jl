@@ -32,3 +32,8 @@ debug
 # Files containing plots
 *.dat
 *.svg
+
+# Files containing tables in VHDL or Verilog
+*.v
+*.sv
+*.vhdl
