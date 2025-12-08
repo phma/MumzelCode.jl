@@ -888,6 +888,14 @@ end
 
 function outputTables()
   outTableVerilog("letter",letter,8)
+  outTableVerilog("invLetter",invLetter,8)
+  outTableVerilog("zel",zel,16)
+  outTableVerilog("invZel",invZel,16)
+  outTableVerilog("perm60",perm60,10)
+  outTableVerilog("invPerm60",invPerm60,10)
+  outTableVerilog("perm20",perm20,10)
+  outTableVerilog("invPerm20",invPerm20,10)
+  outTableVerilog("letterPerm",letterPerm,8)
 end
 
 end # module MumzelCode
