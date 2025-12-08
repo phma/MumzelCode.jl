@@ -176,10 +176,14 @@ end
 
 const zel,invZel=makezel()
 
+###########################################################################
+#
 # Permutations
 #
 # Permutations are written big-endian, e.g. 32104 is [4,0,1,2,3,0] (the sign bit
 # in a Codeword is ignored).
+#
+###########################################################################
 
 function permute(cword::Codeword,perm::Integer)
   mcword=MVector(cword)
@@ -479,7 +483,11 @@ the permcode is invalid.
 """
 const letterPerm=makeLetterPerm()
 
+###########################################################################
+#
 # Encoding
+#
+###########################################################################
 
 function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer)
   # partA ranges from 0 to 625 and selects the kind of letters and permutations
@@ -679,7 +687,11 @@ function encode(n::Unsigned,bits::Integer)
   halfEncode(signBit,partA,partB,zelPart)
 end
 
+###########################################################################
+#
 # Decoding
+#
+###########################################################################
 
 function halfDecode(cw::Codeword)
   pc=permcode(map(UInt8∘count_ones,cw))
