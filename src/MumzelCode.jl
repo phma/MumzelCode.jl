@@ -877,8 +877,10 @@ end
 function outTableVerilog(tableName::String,table::OffsetVector{<:Integer},width::Integer)
   indexTopBit=ceil(Int,log2(length(table)))-1
   @printf "reg [%d:0] %s[%d:0];\n" width-1 tableName indexTopBit
+  hexWid=cld(width,4)
+  fmt=Printf.Format(@sprintf "%%s[%%d]=%%d'h%%0%dx;\n" hexWid)
   for i in eachindex(table)
-    @printf "%s[%d]=%d'h%x;\n" tableName i width table[i]
+    print(Printf.format(fmt,tableName,i,width,table[i]))
   end
 end
 
