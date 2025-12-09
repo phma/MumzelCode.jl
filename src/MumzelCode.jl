@@ -784,7 +784,7 @@ end
 Decodes a `Codeword`. The return value is `(n,bits,codeBits,upsideDown)` where
 
 - `bits`==0: it's a syncword or framing error thereof
-- `bits`∈[1,32]\25: `n` is data
+- `bits`∈[1,32]\\25: `n` is data
 - `bits`==25: `n` is a control code
 - `bits`<0: it's an error.
 
