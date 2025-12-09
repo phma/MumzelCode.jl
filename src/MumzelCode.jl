@@ -28,6 +28,11 @@ println("This program is free software; you can redistribute it and/or modify")
 println("it under the terms of the GNU General Public License version 3 or later.")
 println("Tables output by this program are in the public domain.")
 
+const ENCODE_USING_TABLES=true
+const DECODE_USING_TABLES=true
+# These are for the multiplication and division tables. There are two, so that
+# one can test encoding with tables against decoding with mul/div, or vice versa.
+
 const letter=OffsetVector(
 # 0101010 1010100 1010001 1000101 0010101 1100000 1000001 0000011
 # 1100100 0110010 0011001 1010010 0110001 0110000 0100001 1000010
