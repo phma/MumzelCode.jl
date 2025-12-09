@@ -509,6 +509,16 @@ end
 
 const encodeTable43434=makeEncodeTable43434()
 
+function makeEncodeTable33435()
+  table=OffsetVector(fill(0x0000,150),-1)
+  for i in 0:149
+    table[i]=(i÷75)<<8|(i÷15%5)<<5|(i÷3%5)<<2|(i%3+1)
+  end
+  table
+end
+
+const encodeTable33435=makeEncodeTable33435()
+
 function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer)
   # partA ranges from 0 to 625 and selects the kind of letters and permutations
   # and the 5 or 3 of the last three letters before permutation.
@@ -557,14 +567,22 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     end
   elseif partA<275
     partA-=125
-    perminx=partA÷75
     permtype=20 # pattern 33435
-    partA%=75
     cw[5]=0
     cw[4]=0
-    cw[3]=8+partA÷15
-    cw[2]=0+(partA÷3)%5
-    cw[1]=13+partA%3 # 13 selects 5 bits set letters, of which there are 3 columns
+    if ENCODE_USING_TABLES
+      b=encodeTable33435[partA]
+      perminx=Int(b>>8)
+      cw[3]=8+(b>>5)&7
+      cw[2]=0+(b>>2)&7
+      cw[1]=12+b&3
+    else
+      perminx=partA÷75
+      partA%=75
+      cw[3]=8+partA÷15
+      cw[2]=0+(partA÷3)%5
+      cw[1]=13+partA%3 # 13 selects 5 bits set letters, of which there are 3 columns
+    end
   elseif partA<545
     partA-=275
     perminx=partA÷45
