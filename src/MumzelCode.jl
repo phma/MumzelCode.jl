@@ -499,6 +499,16 @@ const letterPerm=makeLetterPerm()
 #
 ###########################################################################
 
+function makeEncodeTable43434()
+  table=OffsetVector(fill(0x0000,125),-1)
+  for i in 0:124
+    table[i]=(i÷25)<<6|(i÷5%5)<<3|(i%5)
+  end
+  table
+end
+
+const encodeTable43434=makeEncodeTable43434()
+
 function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer)
   # partA ranges from 0 to 625 and selects the kind of letters and permutations
   # and the 5 or 3 of the last three letters before permutation.
@@ -535,9 +545,16 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     permtype=10 # pattern 43434
     cw[5]=8 # selects 4 bits set letters
     cw[4]=0 # selects 3 bits set letters
-    cw[3]=8+partA÷25
-    cw[2]=0+(partA÷5)%5
-    cw[1]=8+partA%5
+    if ENCODE_USING_TABLES
+      b=encodeTable43434[partA]
+      cw[3]=8+b>>6
+      cw[2]=0+(b>>3)&7
+      cw[1]=8+b&7
+    else
+      cw[3]=8+partA÷25
+      cw[2]=0+(partA÷5)%5
+      cw[1]=8+partA%5
+    end
   elseif partA<275
     partA-=125
     perminx=partA÷75
