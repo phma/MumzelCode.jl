@@ -785,6 +785,16 @@ end
 #
 ###########################################################################
 
+function makeDivide10Table()
+  table=OffsetVector(fill(0x00,64),-1)
+  for i in 0:63
+    table[i]=(i÷10)<<4|(i%10)
+  end
+  table
+end
+
+const divide10Table=makeDivide10Table()
+
 function halfDecode(cw::Codeword)
   pc=permcode(map(UInt8∘count_ones,cw))
   pc=min(max(pc,0),1023)
@@ -803,20 +813,28 @@ function halfDecode(cw::Codeword)
   letterRows=map(x->invLetter[x]>>4,cwup)
   letterColumns=map(x->invLetter[x]&0xf,cwup)
   zelPart=invZel[permoct(letterRows)]
-  partB=perminx&63%10*25+(letterColumns[5]&7)*5+(letterColumns[4]&7)
+  if DECODE_USING_TABLES
+    b=divide10Table[perminx&63]
+    perminxA=b>>4
+    perminxB=b&15
+  else
+    perminxA=(perminx&63)÷10
+    perminxB=(perminx&63)%10
+  end
+  partB=perminxB*25+(letterColumns[5]&7)*5+(letterColumns[4]&7)
   # partB ranges from 0 to 249, but only 0-223 is valid,
   # except syncword 1, which is 225.
   if perminx<64 # pattern 43434
     partA=(letterColumns[3]&7)*25+(letterColumns[2]&7)*5+(letterColumns[1]&7)
   elseif perminx<128 # pattern 33435
     partA=(letterColumns[3]&7)*15+(letterColumns[2]&7)*3+(letterColumns[1]&7-5)+125
-    partA+=(perminx-64)÷10*75
+    partA+=perminxA*75
   elseif perminx<192 # pattern 43425
     partA=(letterColumns[3]&7)*9+(letterColumns[2]&7-5)*3+(letterColumns[1]&7-5)+275
-    partA+=(perminx-128)÷10*45
+    partA+=perminxA*45
   else # pattern 33525
     partA=(letterColumns[3]&7-5)*9+(letterColumns[2]&7-5)*3+(letterColumns[1]&7-5)+545
-    partA+=(perminx-192)÷10*27
+    partA+=perminxA*27
   end
   signBit=cw[6]
   if zelPart<0x4000 && sum(map(count_ones,cw))!=18
