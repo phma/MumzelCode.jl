@@ -500,8 +500,10 @@ const letterPerm=makeLetterPerm()
 ###########################################################################
 
 function makeEncodeTable43434()
-  table=OffsetVector(fill(0x0000,125),-1)
-  for i in 0:124
+  # This table is used for encoding part B of all patterns as well as part A
+  # of pattern 43434.
+  table=OffsetVector(fill(0x0000,250),-1)
+  for i in 0:249
     table[i]=(i÷25)<<6|(i÷5%5)<<3|(i%5)
   end
   table
@@ -642,9 +644,16 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
       cw[1]=13+partA%3
     end
   end
-  perminx=perminx*10+partB÷25
-  cw[5]+=(partB÷5)%5
-  cw[4]+=partB%5
+  if ENCODE_USING_TABLES
+    b=encodeTable43434[partB]
+    perminx=perminx*10+b>>6
+    cw[5]+=(b>>3)&7
+    cw[4]+=b&7
+  else
+    perminx=perminx*10+partB÷25
+    cw[5]+=(partB÷5)%5
+    cw[4]+=partB%5
+  end
   if zelPart>=0 && zelPart<16384
     zelCode=zel[zelPart]
   else
@@ -656,7 +665,7 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
   end
   cw[6]=sign
   cw=Codeword(cw)
-  if permtype%3==0
+  if permtype&(permtype>>1)>0 # in hardware, it is sufficient to and bits 2 and 3
     cw=permute(cw,perm60[perminx])
   else
     cw=permute(cw,perm20[perminx])
