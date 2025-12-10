@@ -529,6 +529,18 @@ end
 
 const encodeTable43425=makeEncodeTable43425()
 
+function makeEncodeTable33525()
+  table=OffsetVector(fill(0x00,81),-1)
+  for i in 0:80
+    table[i]=(i÷27)<<6|(i÷9%3+1)<<4|(i÷3%3+1)<<2|(i%3+1)
+    # The high trit does not get 1 added because it goes to the permutation,
+    # not to a letter.
+  end
+  table
+end
+
+const encodeTable33525=makeEncodeTable33525()
+
 function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer)
   # partA ranges from 0 to 625 and selects the kind of letters and permutations
   # and the 5 or 3 of the last three letters before permutation.
@@ -613,14 +625,22 @@ function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer
     end
   else
     partA-=545
-    perminx=partA÷27
     permtype=30 # pattern 33525
-    partA%=27
     cw[5]=0
     cw[4]=0
-    cw[3]=13+partA÷9
-    cw[2]=5+(partA÷3)%3
-    cw[1]=13+partA%3
+    if ENCODE_USING_TABLES
+      b=encodeTable33525[partA]
+      perminx=Int(b>>6)
+      cw[3]=12+(b>>4)&3
+      cw[2]=4+(b>>2)&3
+      cw[1]=12+b&3
+    else
+      perminx=partA÷27
+      partA%=27
+      cw[3]=13+partA÷9
+      cw[2]=5+(partA÷3)%3
+      cw[1]=13+partA%3
+    end
   end
   perminx=perminx*10+partB÷25
   cw[5]+=(partB÷5)%5
