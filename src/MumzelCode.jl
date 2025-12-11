@@ -543,6 +543,16 @@ end
 
 const encodeTable33525=makeEncodeTable33525()
 
+function makeDivide7Table()
+  table=OffsetVector(fill(0x0000,0x206),-1)
+  for i in 0:0x205
+    table[i]=(i÷7)<<3|(i%7)
+  end
+  table
+end
+
+const divide7Table=makeDivide7Table()
+
 function halfEncode(sign::Integer,partA::Integer,partB::Integer,zelPart::Integer)
   # partA ranges from 0 to 625 and selects the kind of letters and permutations
   # and the 5 or 3 of the last three letters before permutation.
@@ -760,8 +770,14 @@ function encode(n::Unsigned,bits::Integer)
       end
       partB=mumPart&0xff
     else
-      partA=(mumPart>>8)÷7+545
-      partB=((mumPart>>8)%7)*32+(mumPart&31)
+      if ENCODE_USING_TABLES
+	b=divide7Table[mumPart>>8]
+	partA=(b>>3)+545
+	partB=(b&7)*32+(mumPart&31)
+      else
+	partA=(mumPart>>8)÷7+545
+	partB=((mumPart>>8)%7)*32+(mumPart&31)
+      end
       @assert partA<626
     end
   else
