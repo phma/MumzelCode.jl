@@ -1002,15 +1002,16 @@ function outTableVerilog(tableName::String,table::OffsetVector{<:Integer},width:
   hexWid=cld(width,4)
   fmt=Printf.Format(@sprintf "%%s[%%d]=%%d'h%%0%dx;\n" hexWid)
   for i in eachindex(table)
+    @assert (1<<width)&table[i]==0
     Printf.format(file,fmt,tableName,i,width,table[i])
   end
   close(file)
 end
 
 function outputTables()
-  outTableVerilog("letter",letter,8)
-  outTableVerilog("invLetter",invLetter,8)
-  outTableVerilog("zel",zel,16)
+  outTableVerilog("letter",letter,7)
+  outTableVerilog("invLetter",invLetter,7)
+  outTableVerilog("zel",zel,15)
   outTableVerilog("invZel",invZel,16)
   outTableVerilog("perm60",perm60,10)
   outTableVerilog("invPerm60",invPerm60,10)
