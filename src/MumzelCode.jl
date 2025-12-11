@@ -1018,6 +1018,12 @@ function outputTables()
   outTableVerilog("perm20",perm20,10)
   outTableVerilog("invPerm20",invPerm20,10)
   outTableVerilog("letterPerm",letterPerm,8)
+  outTableVerilog("encodeTable43434",encodeTable43434,10)
+  outTableVerilog("encodeTable33435",encodeTable33435,9)
+  outTableVerilog("encodeTable43425",encodeTable43425,10)
+  outTableVerilog("encodeTable33525",encodeTable33525,8)
+  outTableVerilog("divide7Table",divide7Table,10)
+  outTableVerilog("divide10Table",divide10Table,8)
 end
 
 end # module MumzelCode
