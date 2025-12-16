@@ -1,4 +1,5 @@
 [deps]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
 MumzelCode = "2d00372c-c190-492a-867f-43c797d38eeb"
 OffsetArrays = "6fe1bfb0-de20-5000-8ca7-80f57d26f881"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"

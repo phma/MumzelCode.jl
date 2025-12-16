@@ -17,8 +17,10 @@
 #   along with Mumzel; if not, see <http://www.gnu.org/licenses/>.        #
 ###########################################################################
 
-using MumzelCode,Test,Printf
+using MumzelCode,Test,Printf,Aqua
 using MumzelCode:c43434,c33435,c43425,c33525,perm60,perm20,permute,invZel
+
+Aqua.test_all(MumzelCode)
 
 @test MumzelCode.invLetter[0x65]==0x3a
 
