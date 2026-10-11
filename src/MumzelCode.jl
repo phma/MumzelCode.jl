@@ -1,5 +1,5 @@
 ###########################################################################
-#   Copyright (C) 2025 by Pierre Abbat                                    #
+#   Copyright (C) 2026 by Pierre Abbat                                    #
 #   phma@bezitopo.org                                                     #
 #   This file is part of Mumzel.                                          #
 #                                                                         #
@@ -23,7 +23,7 @@ export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
 export halfEncode,encode,codewordInt,intCodeword,perm20Inverses,perm60Inverses
 export halfDecode,decode,appendCodeword!,decodeStream,outputTables
 
-println("Mumzel Code © 2025 Pierre Abbat")
+println("Mumzel Code © 2026 Pierre Abbat")
 println("This program is free software; you can redistribute it and/or modify")
 println("it under the terms of the GNU General Public License version 3 or later.")
 println("Tables output by this program are in the public domain.")
@@ -304,6 +304,8 @@ function makeperms()
   (ptable,invPerm)
 end
 
+const (ptable,invPerm)=makeperms()
+
 """
     ptable::OffsetArray(::Vector{UInt16}, 0:1023)
 
@@ -312,7 +314,7 @@ canonical, and another ten-bit code for the same permutation, with the high bit
 set, if it isn't. Repeated lookup of codes with the high bit set will eventually
 find the canonical code.
 """
-const (ptable,invPerm)=makeperms()
+ptable
 
 """
     invPerm::OffsetArray(::Vector{UInt16}, 0:1023)
