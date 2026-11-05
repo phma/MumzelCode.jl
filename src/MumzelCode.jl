@@ -18,6 +18,8 @@
 ###########################################################################
 
 module MumzelCode
+include("TransLines.jl")
+using .TransLines
 using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
 export halfEncode,encode,codewordInt,intCodeword,perm20Inverses,perm60Inverses
