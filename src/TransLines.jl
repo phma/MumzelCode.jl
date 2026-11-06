@@ -8,7 +8,7 @@ slowRate::Float64=1/8/11
 mutable struct TransLine
   fast	::Float64
   slow	::Float64
-  TransLine()=new(-2,-2)
+  TransLine()=new(0,0)
 end
 
 function filter!(tl::TransLine,sample::AbstractFloat)
