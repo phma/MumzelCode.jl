@@ -2,8 +2,8 @@ module TransLines
 # Simulates a transmission line
 export TransLine,filter!,transmit!
 
-fastRate::Float64=0.5
-slowRate::Float64=1/8/11
+fastRate::Float64=0.2
+slowRate::Float64=1/8/1331
 
 mutable struct TransLine
   fast	::Float64
