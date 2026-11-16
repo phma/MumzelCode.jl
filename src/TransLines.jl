@@ -1,9 +1,40 @@
 module TransLines
 # Simulates a transmission line
+using OffsetArrays,Random
 export TransLine,filter!,transmit!,Receiver,receiveBits!
+export Noisemaker,noise!
 
 fastRate::Float64=0.2
 slowRate::Float64=1/8/1331
+
+rng=RandomDevice()
+
+mutable struct Noisemaker
+  next	::Int
+  int	::Int
+  Noisemaker()=new(0,0)
+end
+
+const fibo::OffsetVector{Int16}=OffsetVector(
+  [13,21,34,55,89,144,233,377,610,987,1597,2584,4181,6765,10946,17711]
+  ,-1) # start with 13 because 8 is a power of 2
+
+function delay(n::Integer)
+  2^(n÷16+4)+fibo[n%16]
+end
+
+function noise!(nm::Noisemaker)
+  nm.next-=1
+  if nm.next<0
+    nm.next+=delay(rand(rng,UInt8))
+    nm.int=rand(rng,UInt8)
+  end
+  if nm.next<2
+    real((7im/8-1/2)^(nm.int+nm.next))*64
+  else
+    0.0
+  end
+end
 
 mutable struct TransLine
   fast	::Float64
