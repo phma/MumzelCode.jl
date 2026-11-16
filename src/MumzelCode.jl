@@ -24,6 +24,7 @@ using OffsetArrays,StaticArrays,Printf
 export Codeword,permcode,permoct,cycleType,makeperms,makeperms2,permstr,outComb
 export halfEncode,encode,codewordInt,intCodeword,perm20Inverses,perm60Inverses
 export halfDecode,decode,appendCodeword!,decodeStream,outputTables
+export TransLine,filter!,transmit!,Receiver,receiveBits!
 
 println("Mumzel Code © 2026 Pierre Abbat")
 println("This program is free software; you can redistribute it and/or modify")
