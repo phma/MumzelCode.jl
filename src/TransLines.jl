@@ -56,7 +56,7 @@ Returns a stream of `Int8` samples, eight samples per bit. If `nbits` is not
 specified, it is the number of bits in `stream`.
 """
 function transmit!(tl::TransLine,stream::Vector{UInt8},nbits::Integer)
-  ret=Int8[]
+  ret=Int16[]
   for i in 8:nbits+7
     b=Float64((stream[i÷8]>>(i%8))&1)
     for j in 1:8
@@ -81,7 +81,7 @@ mutable struct Receiver
   Receiver()=new(0,Float64[],16,0)
 end
 
-function receiveBits!(rcv::Receiver,stream::Vector{Int8})
+function receiveBits!(rcv::Receiver,stream::Vector{<:Integer})
   ret=Int8[] # pack 8 to a byte later
   for sample in stream
     sample+=0.5
